@@ -203,8 +203,8 @@
                       "properties": {
                         "type": "Lakehouse",
                         "typeProperties": {
-                          "artifactId": "171fd0c6-8801-4fbc-aa81-c969dc4d80ec",
-                          "workspaceId": "51267455-e79f-4f83-a4a9-117ad1f1554b",
+                          "artifactId": "2799b68e-4904-b9e3-4431-747b4287e462",
+                          "workspaceId": "00000000-0000-0000-0000-000000000000",
                           "rootFolder": "Files"
                         },
                         "annotations": []
