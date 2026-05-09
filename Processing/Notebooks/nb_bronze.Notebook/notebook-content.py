@@ -99,6 +99,7 @@ df.write.format("delta").mode(target_mode).save(path_bronze)
 
 # CELL ********************
 
+spark.sql("DROP TABLE IF EXISTS lh_bronze.Customer")
 
 # METADATA ********************
 

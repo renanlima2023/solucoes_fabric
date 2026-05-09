@@ -163,7 +163,10 @@
                   "datasetSettings": {
                     "type": "SqlServerTable",
                     "typeProperties": {
-                      "database": "AdventureWorksLT"
+                      "database": {
+                        "value": "@item().SourceDatabase",
+                        "type": "Expression"
+                      }
                     },
                     "schema": [],
                     "externalReferences": {
