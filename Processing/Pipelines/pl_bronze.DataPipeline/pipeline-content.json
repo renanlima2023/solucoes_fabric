@@ -1,0 +1,141 @@
+{
+  "properties": {
+    "activities": [
+      {
+        "type": "Lookup",
+        "typeProperties": {
+          "source": {
+            "type": "ExcelSource",
+            "storeSettings": {
+              "type": "LakehouseReadSettings",
+              "recursive": false,
+              "enablePartitionDiscovery": false
+            }
+          },
+          "datasetSettings": {
+            "type": "Excel",
+            "typeProperties": {
+              "location": {
+                "type": "LakehouseLocation",
+                "folderPath": "Metadata",
+                "fileName": "Orquestrador.xlsx"
+              },
+              "sheetName": "Bronze",
+              "firstRowAsHeader": true
+            },
+            "schema": [],
+            "linkedService": {
+              "name": "lh_bronze",
+              "properties": {
+                "type": "Lakehouse",
+                "typeProperties": {
+                  "artifactId": "2799b68e-4904-b9e3-4431-747b4287e462",
+                  "workspaceId": "00000000-0000-0000-0000-000000000000",
+                  "rootFolder": "Files"
+                },
+                "annotations": []
+              }
+            },
+            "annotations": []
+          },
+          "firstRowOnly": false
+        },
+        "policy": {
+          "timeout": "0.00:10:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "Orquestrador",
+        "description": "Ler planilha excel com metadados com orquestração do pipeline referentes a camada bronze",
+        "dependsOn": []
+      },
+      {
+        "type": "ForEach",
+        "typeProperties": {
+          "isSequential": false,
+          "batchCount": 2,
+          "items": {
+            "value": "@activity('Orquestrador').output.value",
+            "type": "Expression"
+          },
+          "activities": [
+            {
+              "type": "TridentNotebook",
+              "typeProperties": {
+                "notebookId": "cafa50a4-c691-8e2d-411c-af62daee439d",
+                "workspaceId": "00000000-0000-0000-0000-000000000000",
+                "parameters": {
+                  "source_storage": {
+                    "value": {
+                      "value": "@item().SourceStorage",
+                      "type": "Expression"
+                    },
+                    "type": "string"
+                  },
+                  "source_folder": {
+                    "value": {
+                      "value": "@item().SourceFolder",
+                      "type": "Expression"
+                    },
+                    "type": "string"
+                  },
+                  "source_file": {
+                    "value": {
+                      "value": "@item().SourceFile",
+                      "type": "Expression"
+                    },
+                    "type": "string"
+                  },
+                  "target_storage": {
+                    "value": {
+                      "value": "@item().TargetStorage",
+                      "type": "Expression"
+                    },
+                    "type": "string"
+                  },
+                  "target_table": {
+                    "value": {
+                      "value": "@item().TargetTable",
+                      "type": "Expression"
+                    },
+                    "type": "string"
+                  },
+                  "target_mode": {
+                    "value": {
+                      "value": "@item().TargetMode",
+                      "type": "Expression"
+                    },
+                    "type": "string"
+                  }
+                },
+                "sessionTag": "BronzeSession"
+              },
+              "policy": {
+                "timeout": "0.00:10:00",
+                "retry": 0,
+                "retryIntervalInSeconds": 30,
+                "secureInput": false,
+                "secureOutput": false
+              },
+              "name": "Bronze",
+              "description": "Lê os dados de arquivos Parquet e cria a tabela Delta na camada Bronze",
+              "dependsOn": []
+            }
+          ]
+        },
+        "name": "Iterador",
+        "description": "Iterar os arquivos parquet da pasta staging para direcionar ao Notebook",
+        "dependsOn": [
+          {
+            "activity": "Orquestrador",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

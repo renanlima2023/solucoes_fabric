@@ -1,0 +1,86 @@
+{
+  "properties": {
+    "activities": [
+      {
+        "name": "Pipeline_Staging",
+        "type": "InvokePipeline",
+        "dependsOn": [],
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureOutput": false,
+          "secureInput": false
+        },
+        "typeProperties": {
+          "waitOnCompletion": true,
+          "operationType": "InvokeFabricPipeline",
+          "pipelineId": "0c9a2d6a-800e-468f-b7fc-3f8ee06d9c84",
+          "workspaceId": "51267455-e79f-4f83-a4a9-117ad1f1554b",
+          "parameters": {}
+        },
+        "externalReferences": {
+          "connection": "cb3ea16f-101f-411d-8457-393a2e2f3d0e"
+        }
+      },
+      {
+        "name": "Pipeline_bronze",
+        "type": "InvokePipeline",
+        "dependsOn": [
+          {
+            "activity": "Pipeline_Staging",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ],
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureOutput": false,
+          "secureInput": false
+        },
+        "typeProperties": {
+          "waitOnCompletion": true,
+          "operationType": "InvokeFabricPipeline",
+          "pipelineId": "877c4b9e-8ae7-4fc5-a885-2c09144a85c9",
+          "workspaceId": "51267455-e79f-4f83-a4a9-117ad1f1554b",
+          "parameters": {}
+        },
+        "externalReferences": {
+          "connection": "cb3ea16f-101f-411d-8457-393a2e2f3d0e"
+        }
+      },
+      {
+        "name": "Pipeline_silver",
+        "type": "InvokePipeline",
+        "dependsOn": [
+          {
+            "activity": "Pipeline_bronze",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ],
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureOutput": false,
+          "secureInput": false
+        },
+        "typeProperties": {
+          "waitOnCompletion": true,
+          "operationType": "InvokeFabricPipeline",
+          "pipelineId": "79271c8b-fce4-4443-b249-c6d0aee31130",
+          "workspaceId": "51267455-e79f-4f83-a4a9-117ad1f1554b",
+          "parameters": {}
+        },
+        "externalReferences": {
+          "connection": "cb3ea16f-101f-411d-8457-393a2e2f3d0e"
+        }
+      }
+    ]
+  }
+}
