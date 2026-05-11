@@ -8,12 +8,12 @@
 # META   },
 # META   "dependencies": {
 # META     "lakehouse": {
-# META       "default_lakehouse": "171fd0c6-8801-4fbc-aa81-c969dc4d80ec",
+# META       "default_lakehouse": "aa9e39b7-e88f-4749-851f-2b82ea1ac5cf",
 # META       "default_lakehouse_name": "lh_bronze",
-# META       "default_lakehouse_workspace_id": "51267455-e79f-4f83-a4a9-117ad1f1554b",
+# META       "default_lakehouse_workspace_id": "158b5a59-9912-49d3-8467-c01f1a4c032b",
 # META       "known_lakehouses": [
 # META         {
-# META           "id": "171fd0c6-8801-4fbc-aa81-c969dc4d80ec"
+# META           "id": "aa9e39b7-e88f-4749-851f-2b82ea1ac5cf"
 # META         }
 # META       ]
 # META     }
@@ -36,6 +36,7 @@ spark.conf.set("spark.sql.caseSensitive", True)
 import sempy.fabric as fabric
 workspace_id = fabric.get_workspace_id()
 workspace_name = fabric.resolve_workspace_name()
+print(fabric.resolve_workspace_name())
 
 # METADATA ********************
 
@@ -55,6 +56,19 @@ source_file= ""
 target_storage= ""
 target_table= ""
 target_mode= ""
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
+# CELL ********************
+
+print("source_storage =", source_storage)
+print("source_folder =", source_folder)
+print("source_file =", source_file)
 
 # METADATA ********************
 
@@ -89,17 +103,6 @@ f"{target_storage}.Lakehouse/Tables/{target_table}"
 df = spark.read.parquet(path_staging)
 # Escrita da Tabela Delta na camada Bronze
 df.write.format("delta").mode(target_mode).save(path_bronze)
-
-# METADATA ********************
-
-# META {
-# META   "language": "python",
-# META   "language_group": "synapse_pyspark"
-# META }
-
-# CELL ********************
-
-spark.sql("DROP TABLE IF EXISTS lh_bronze.Customer")
 
 # METADATA ********************
 

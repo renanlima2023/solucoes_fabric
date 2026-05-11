@@ -6,7 +6,18 @@
 # META   "kernel_info": {
 # META     "name": "synapse_pyspark"
 # META   },
-# META   "dependencies": {}
+# META   "dependencies": {
+# META     "lakehouse": {
+# META       "default_lakehouse": "979d0bea-388a-4223-930c-1ce1f3c2a34d",
+# META       "default_lakehouse_name": "lh_silver",
+# META       "default_lakehouse_workspace_id": "158b5a59-9912-49d3-8467-c01f1a4c032b",
+# META       "known_lakehouses": [
+# META         {
+# META           "id": "979d0bea-388a-4223-930c-1ce1f3c2a34d"
+# META         }
+# META       ]
+# META     }
+# META   }
 # META }
 
 # CELL ********************
@@ -22,8 +33,7 @@
 
 # CELL ********************
 
-# Configurações da sessão spark
-spark.conf.set("spark.sql.CaseSensitive", True)
+spark.conf.set("spark.sql.caseSensitive", True)
 
 # METADATA ********************
 
@@ -60,6 +70,17 @@ workspace_name = fabric.resolve_workspace_name()
 # META }
 
 # CELL ********************
+
+print(workspace_name)
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
+# PARAMETERS CELL ********************
 
 #Paramentros
 source_storage = ""
@@ -195,11 +216,18 @@ df_final = (
 
 # CELL ********************
 
-# Gravação da Tabela com o modo atribuido
-if target_mode == "merge":
-    safe_merge(df_final, path_silver, target_key)
+tabela_existe = spark._jsparkSession.catalog().tableExists(target_table)
+
+if not tabela_existe:
+    print(f"Criando tabela {target_table} com saveAsTable()...")
+    df_final.write \
+        .format("delta") \
+        .mode("overwrite") \
+        .saveAsTable(target_table)
+
 else:
-    df_final.write.format("delta").mode(target_mode).save(path)
+    print(f"Fazendo MERGE na tabela {target_table}...")
+    safe_merge(df_final, path_silver, target_key)
 
 # METADATA ********************
 
