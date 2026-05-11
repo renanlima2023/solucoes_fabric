@@ -66,19 +66,6 @@ target_mode= ""
 
 # CELL ********************
 
-print("source_storage =", source_storage)
-print("source_folder =", source_folder)
-print("source_file =", source_file)
-
-# METADATA ********************
-
-# META {
-# META   "language": "python",
-# META   "language_group": "synapse_pyspark"
-# META }
-
-# CELL ********************
-
 #Caminho abs para a orgirem (arquivos parquet)
 path_staging= (
     f"abfss://{workspace_name}@onelake.dfs.fabric.microsoft.com/"
