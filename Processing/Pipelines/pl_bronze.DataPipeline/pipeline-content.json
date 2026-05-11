@@ -64,7 +64,7 @@
             {
               "type": "TridentNotebook",
               "typeProperties": {
-                "notebookId": "fa77a084-d69c-9876-4495-d73150234a0d",
+                "notebookId": "a5b3cf3d-ff56-a736-4a25-27ebdd502524",
                 "workspaceId": "00000000-0000-0000-0000-000000000000",
                 "parameters": {
                   "source_storage": {
