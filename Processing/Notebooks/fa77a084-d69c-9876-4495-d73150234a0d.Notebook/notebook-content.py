@@ -76,20 +76,14 @@ f"{target_storage}.Lakehouse/Tables/{target_table}"
 # CELL ********************
 
 # Leitura do Arquivo Parquet na Staging
-df = spark.read.parquet(path_staging)
+df = spark.read.parquet(
+    f"Files/{source_folder}/{source_file}"
+)
+
 # Escrita da Tabela Delta na camada Bronze
-df.write.format("delta").mode(target_mode).save(path_bronze)
-
-# METADATA ********************
-
-# META {
-# META   "language": "python",
-# META   "language_group": "synapse_pyspark"
-# META }
-
-# CELL ********************
-
-print(path_staging)
+df.write.format("delta") \
+    .mode(target_mode) \
+    .saveAsTable(f"dbo.{target_table}")
 
 # METADATA ********************
 
