@@ -6,7 +6,18 @@
 # META   "kernel_info": {
 # META     "name": "synapse_pyspark"
 # META   },
-# META   "dependencies": {}
+# META   "dependencies": {
+# META     "lakehouse": {
+# META       "default_lakehouse": "979d0bea-388a-4223-930c-1ce1f3c2a34d",
+# META       "default_lakehouse_name": "lh_silver",
+# META       "default_lakehouse_workspace_id": "158b5a59-9912-49d3-8467-c01f1a4c032b",
+# META       "known_lakehouses": [
+# META         {
+# META           "id": "979d0bea-388a-4223-930c-1ce1f3c2a34d"
+# META         }
+# META       ]
+# META     }
+# META   }
 # META }
 
 # CELL ********************
@@ -51,6 +62,17 @@ import sempy.fabric as fabric
 #Obtenção do workspaceID e workspaceName
 workspace_id = fabric.get_notebook_workspace_id()
 workspace_name = fabric.resolve_workspace_name()
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
+# CELL ********************
+
+print(workspace_name)
 
 # METADATA ********************
 

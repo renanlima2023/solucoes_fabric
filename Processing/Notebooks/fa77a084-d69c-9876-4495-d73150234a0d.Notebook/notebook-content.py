@@ -6,7 +6,18 @@
 # META   "kernel_info": {
 # META     "name": "synapse_pyspark"
 # META   },
-# META   "dependencies": {}
+# META   "dependencies": {
+# META     "lakehouse": {
+# META       "default_lakehouse": "aa9e39b7-e88f-4749-851f-2b82ea1ac5cf",
+# META       "default_lakehouse_name": "lh_bronze",
+# META       "default_lakehouse_workspace_id": "158b5a59-9912-49d3-8467-c01f1a4c032b",
+# META       "known_lakehouses": [
+# META         {
+# META           "id": "aa9e39b7-e88f-4749-851f-2b82ea1ac5cf"
+# META         }
+# META       ]
+# META     }
+# META   }
 # META }
 
 # CELL ********************
@@ -34,7 +45,7 @@ print(fabric.resolve_workspace_name())
 # META   "language_group": "synapse_pyspark"
 # META }
 
-# CELL ********************
+# PARAMETERS CELL ********************
 
 # Paramentros
 
@@ -45,6 +56,19 @@ source_file= ""
 target_storage= ""
 target_table= ""
 target_mode= ""
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
+# CELL ********************
+
+print("source_storage =", source_storage)
+print("source_folder =", source_folder)
+print("source_file =", source_file)
 
 # METADATA ********************
 
@@ -76,14 +100,9 @@ f"{target_storage}.Lakehouse/Tables/{target_table}"
 # CELL ********************
 
 # Leitura do Arquivo Parquet na Staging
-df = spark.read.parquet(
-    f"Files/{source_folder}/{source_file}"
-)
-
+df = spark.read.parquet(path_staging)
 # Escrita da Tabela Delta na camada Bronze
-df.write.format("delta") \
-    .mode(target_mode) \
-    .saveAsTable(f"dbo.{target_table}")
+df.write.format("delta").mode(target_mode).save(path_bronze)
 
 # METADATA ********************
 
