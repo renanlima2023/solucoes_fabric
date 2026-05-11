@@ -2,17 +2,7 @@
   "properties": {
     "activities": [
       {
-        "name": "Orquestrador",
-        "description": "Ler planilha excel com metadados com orquestração do pipeline referentes a camada silver",
         "type": "Lookup",
-        "dependsOn": [],
-        "policy": {
-          "timeout": "0.00:10:00",
-          "retry": 0,
-          "retryIntervalInSeconds": 30,
-          "secureOutput": false,
-          "secureInput": false
-        },
         "typeProperties": {
           "source": {
             "type": "ExcelSource",
@@ -22,47 +12,47 @@
               "enablePartitionDiscovery": false
             }
           },
-          "firstRowOnly": false,
           "datasetSettings": {
-            "annotations": [],
+            "type": "Excel",
+            "typeProperties": {
+              "location": {
+                "type": "LakehouseLocation",
+                "folderPath": "Metadata",
+                "fileName": "Orquestrador.xlsx"
+              },
+              "sheetName": "Silver",
+              "firstRowAsHeader": true
+            },
+            "schema": [],
             "linkedService": {
               "name": "lh_bronze",
               "properties": {
-                "annotations": [],
                 "type": "Lakehouse",
                 "typeProperties": {
-                  "workspaceId": "51267455-e79f-4f83-a4a9-117ad1f1554b",
-                  "artifactId": "171fd0c6-8801-4fbc-aa81-c969dc4d80ec",
+                  "artifactId": "2799b68e-4904-b9e3-4431-747b4287e462",
+                  "workspaceId": "00000000-0000-0000-0000-000000000000",
                   "rootFolder": "Files"
-                }
+                },
+                "annotations": []
               }
             },
-            "type": "Excel",
-            "typeProperties": {
-              "sheetName": "Silver",
-              "location": {
-                "type": "LakehouseLocation",
-                "fileName": "Orquestrador.xlsx",
-                "folderPath": "Metadata"
-              },
-              "firstRowAsHeader": true
-            },
-            "schema": []
-          }
-        }
+            "annotations": []
+          },
+          "firstRowOnly": false
+        },
+        "policy": {
+          "timeout": "0.00:10:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "Orquestrador",
+        "description": "Ler planilha excel com metadados com orquestração do pipeline referentes a camada silver",
+        "dependsOn": []
       },
       {
-        "name": "Filtro Clientes",
-        "description": "Filtrar as informações referente a tabela clientes",
         "type": "Filter",
-        "dependsOn": [
-          {
-            "activity": "Orquestrador",
-            "dependencyConditions": [
-              "Succeeded"
-            ]
-          }
-        ],
         "typeProperties": {
           "items": {
             "value": "@activity('Orquestrador').output.value",
@@ -72,30 +62,23 @@
             "value": "@and(\n    equals(item().TargetTable, 'Customers'),\n    equals(item().Flag, '1')\n    )",
             "type": "Expression"
           }
-        }
-      },
-      {
-        "name": "Nb_Clientes",
-        "description": "Executa  notebook clientes na camada silver",
-        "type": "TridentNotebook",
+        },
+        "name": "Filtro Clientes",
+        "description": "Filtrar as informações referente a tabela clientes",
         "dependsOn": [
           {
-            "activity": "Filtro Clientes",
+            "activity": "Orquestrador",
             "dependencyConditions": [
               "Succeeded"
             ]
           }
-        ],
-        "policy": {
-          "timeout": "0.00:10:00",
-          "retry": 0,
-          "retryIntervalInSeconds": 30,
-          "secureOutput": false,
-          "secureInput": false
-        },
+        ]
+      },
+      {
+        "type": "TridentNotebook",
         "typeProperties": {
-          "notebookId": "690145ca-3ae8-49bf-bec1-3d2e1235813a",
-          "workspaceId": "51267455-e79f-4f83-a4a9-117ad1f1554b",
+          "notebookId": "5b3591e0-aca1-b661-466b-c7780f16aad1",
+          "workspaceId": "00000000-0000-0000-0000-000000000000",
           "parameters": {
             "source_storage": {
               "value": {
@@ -141,20 +124,27 @@
             }
           },
           "sessionTag": "SilverSession"
-        }
-      },
-      {
-        "name": "Filtro Produtos",
-        "description": "Filtrar as informações referente a tabela produtos",
-        "type": "Filter",
+        },
+        "policy": {
+          "timeout": "0.00:10:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "Nb_Clientes",
+        "description": "Executa  notebook clientes na camada silver",
         "dependsOn": [
           {
-            "activity": "Orquestrador",
+            "activity": "Filtro Clientes",
             "dependencyConditions": [
               "Succeeded"
             ]
           }
-        ],
+        ]
+      },
+      {
+        "type": "Filter",
         "typeProperties": {
           "items": {
             "value": "@activity('Orquestrador').output.value",
@@ -164,12 +154,9 @@
             "value": "@and(\n    equals(item().TargetTable, 'Products'),\n    equals(item().Flag, '1')\n    )",
             "type": "Expression"
           }
-        }
-      },
-      {
-        "name": "Filtro Vendas",
-        "description": "Filtrar as informações referente a tabela Vendas",
-        "type": "Filter",
+        },
+        "name": "Filtro Produtos",
+        "description": "Filtrar as informações referente a tabela produtos",
         "dependsOn": [
           {
             "activity": "Orquestrador",
@@ -177,7 +164,10 @@
               "Succeeded"
             ]
           }
-        ],
+        ]
+      },
+      {
+        "type": "Filter",
         "typeProperties": {
           "items": {
             "value": "@activity('Orquestrador').output.value",
@@ -187,30 +177,23 @@
             "value": "@and(\n    equals(item().TargetTable, 'Sales'),\n    equals(item().Flag, '1')\n    )",
             "type": "Expression"
           }
-        }
-      },
-      {
-        "name": "Nb_produtos",
-        "description": "Executa  notebook produtos na camada silver",
-        "type": "TridentNotebook",
+        },
+        "name": "Filtro Vendas",
+        "description": "Filtrar as informações referente a tabela Vendas",
         "dependsOn": [
           {
-            "activity": "Filtro Produtos",
+            "activity": "Orquestrador",
             "dependencyConditions": [
               "Succeeded"
             ]
           }
-        ],
-        "policy": {
-          "timeout": "0.00:10:00",
-          "retry": 0,
-          "retryIntervalInSeconds": 30,
-          "secureOutput": false,
-          "secureInput": false
-        },
+        ]
+      },
+      {
+        "type": "TridentNotebook",
         "typeProperties": {
-          "notebookId": "b1871c84-90eb-4955-9aa0-d3b6390c0c63",
-          "workspaceId": "51267455-e79f-4f83-a4a9-117ad1f1554b",
+          "notebookId": "0b71ad74-0186-adbb-4cc0-016d6e29a246",
+          "workspaceId": "00000000-0000-0000-0000-000000000000",
           "parameters": {
             "source_storage": {
               "value": {
@@ -256,30 +239,30 @@
             }
           },
           "sessionTag": "SilverSession"
-        }
-      },
-      {
-        "name": "Nb_Vendas",
-        "description": "Executa  notebook vendas na camada silver",
-        "type": "TridentNotebook",
-        "dependsOn": [
-          {
-            "activity": "Filtro Vendas",
-            "dependencyConditions": [
-              "Succeeded"
-            ]
-          }
-        ],
+        },
         "policy": {
           "timeout": "0.00:10:00",
           "retry": 0,
           "retryIntervalInSeconds": 30,
-          "secureOutput": false,
-          "secureInput": false
+          "secureInput": false,
+          "secureOutput": false
         },
+        "name": "Nb_produtos",
+        "description": "Executa  notebook produtos na camada silver",
+        "dependsOn": [
+          {
+            "activity": "Filtro Produtos",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "TridentNotebook",
         "typeProperties": {
-          "notebookId": "0f789088-8418-4ece-b112-0f2d541d0367",
-          "workspaceId": "51267455-e79f-4f83-a4a9-117ad1f1554b",
+          "notebookId": "b8fce5c1-000e-a51a-482d-f8fcfd2184d7",
+          "workspaceId": "00000000-0000-0000-0000-000000000000",
           "parameters": {
             "source_storage": {
               "value": {
@@ -325,7 +308,24 @@
             }
           },
           "sessionTag": "SilverSession"
-        }
+        },
+        "policy": {
+          "timeout": "0.00:10:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "Nb_Vendas",
+        "description": "Executa  notebook vendas na camada silver",
+        "dependsOn": [
+          {
+            "activity": "Filtro Vendas",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
       }
     ]
   }
