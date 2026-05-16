@@ -1,0 +1,10 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/variableLibrary/definition/valueSet/1.0.0/schema.json",
+  "name": "prd",
+  "variableOverrides": [
+    {
+      "name": "con_sqlserver_adworks_id",
+      "value": "fe0e73d1-2aea-493b-a4b1-abf9a3fdef99"
+    }
+  ]
+}

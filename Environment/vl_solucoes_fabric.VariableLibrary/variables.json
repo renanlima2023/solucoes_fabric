@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/variableLibrary/definition/variables/1.0.0/schema.json",
+  "variables": [
+    {
+      "name": "con_sqlserver_adworks_id",
+      "note": "Parâmetro de referência a conexão On-premises com o SQL Server, no database AdventureworksLT",
+      "type": "String",
+      "value": "04ee5ef8-2c8e-435a-970c-164db2e361ea"
+    }
+  ]
+}
