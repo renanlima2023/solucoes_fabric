@@ -170,7 +170,7 @@
                     },
                     "schema": [],
                     "externalReferences": {
-                      "connection": "04ee5ef8-2c8e-435a-970c-164db2e361ea"
+                      "connection": "@pipeline().libraryVariables.vl_solucoes_fabric_con_sqlserver_adworks_id"
                     },
                     "annotations": []
                   }
@@ -250,6 +250,13 @@
           }
         ]
       }
-    ]
+    ],
+    "libraryVariables": {
+      "vl_solucoes_fabric_con_sqlserver_adworks_id": {
+        "type": "String",
+        "variableName": "con_sqlserver_adworks_id",
+        "libraryName": "vl_solucoes_fabric"
+      }
+    }
   }
 }
