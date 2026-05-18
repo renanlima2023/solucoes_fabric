@@ -207,11 +207,7 @@ df_join = (
 window = W.partitionBy("SalesOrderID")
 
 # Criação do Dataframe Final
-df_final = df_join.withColumn(
-    "OrderQtyTotal",
-    F.sum("OrderQty").over(window)
-
-)
+df_final = df_join.withColumn("OrderQtyTotal", F.sum("OrderQty").over(window))
 
 df_final = (
     df_final
