@@ -233,8 +233,7 @@ df_final = (
 
 # CELL ********************
 
-tabela_nome = target_table 
-
+tabela_nome = f"default.{target_table}"
 # Verifica se a tabela já existe registrada no catálogo do Lakehouse
 tabela_existe = spark.catalog.tableExists(tabela_nome)
 
