@@ -204,7 +204,7 @@ df_join = (
 # CELL ********************
 
 # Particionamento
-window = W.partitionBy("SalesOrderID")
+window = Window.partitionBy("SalesOrderID")
 
 # Criação do Dataframe Final
 df_final = df_join.withColumn("OrderQtyTotal", F.sum("OrderQty").over(window))
