@@ -22,18 +22,6 @@
 
 # CELL ********************
 
-from delta.tables import DeltaTable
-
-
-# METADATA ********************
-
-# META {
-# META   "language": "python",
-# META   "language_group": "synapse_pyspark"
-# META }
-
-# CELL ********************
-
 %run nd_functions
 
 # METADATA ********************
@@ -56,9 +44,10 @@ spark.conf.set("spark.sql.caseSensitive", True)
 
 # CELL ********************
 
+#Bibliotecas
 from pyspark.sql import functions as F
-from pyspark.sql.window import Window as W
-import sempy.fabric as fabric
+from delta.tables import DeltaTable
+import sempy.fabric as fabricc
 
 
 # METADATA ********************
@@ -283,22 +272,23 @@ display(df_final)
 
 # CELL ********************
 
-path_table = f"Tables/{target_table}"
+tabela_nome = target_table 
 
-# Verifica se a tabela física Delta existe
-tabela_existe = DeltaTable.isDeltaTable(spark, path_table)
+# Verifica se a tabela já existe registrada no catálogo do Lakehouse
+tabela_existe = spark.catalog.tableExists(tabela_nome)
 
 if not tabela_existe:
-    print(f"Criando tabela física Delta em {path_table}...")
+    print(f"Criando tabela identificada no Lakehouse: {tabela_nome}...")
     df_final.write \
         .format("delta") \
         .mode("overwrite") \
-        .save(path_table)
+        .saveAsTable(tabela_nome)  # Registra oficialmente na seção 'Tables'
 
 else:
-    print(f"Fazendo MERGE na tabela física Delta {path_table}...")
+    print(f"Fazendo MERGE na tabela identificada {tabela_nome}...")
 
-    delta_table = DeltaTable.forPath(spark, path_table)
+    # Instancia a tabela Delta usando o nome mapeado no catálogo (forName em vez de forPath)
+    delta_table = DeltaTable.forName(spark, tabela_nome)
 
     delta_table.alias("t").merge(
         df_final.alias("s"),
