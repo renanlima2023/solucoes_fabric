@@ -228,8 +228,6 @@ df_final = (
 
 # CELL ********************
 
-from delta.tables import DeltaTable
-
 path_table = f"Tables/{target_table}"
 
 # Verifica se a tabela física Delta existe
@@ -253,7 +251,6 @@ else:
     ).whenMatchedUpdateAll() \
      .whenNotMatchedInsertAll() \
      .execute()
-
 
 # METADATA ********************
 
