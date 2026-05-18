@@ -22,6 +22,18 @@
 
 # CELL ********************
 
+from delta.tables import DeltaTable
+
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
+# CELL ********************
+
 %run nd_functions
 
 # METADATA ********************
@@ -46,7 +58,6 @@ spark.conf.set("spark.sql.caseSensitive", True)
 
 from pyspark.sql import functions as F
 from pyspark.sql.window import Window as W
-from delta.tables import DeltaTable
 import sempy.fabric as fabric
 
 
