@@ -216,18 +216,29 @@ df_final = (
 
 # CELL ********************
 
-tabela_existe = spark._jsparkSession.catalog().tableExists(target_table)
+path_table = f"Tables/{target_table}"
+
+# Verifica se a tabela física Delta existe
+tabela_existe = DeltaTable.isDeltaTable(spark, path_table)
 
 if not tabela_existe:
-    print(f"Criando tabela {target_table} com saveAsTable()...")
+    print(f"Criando tabela física Delta em {path_table}...")
     df_final.write \
         .format("delta") \
         .mode("overwrite") \
-        .saveAsTable(target_table)
+        .save(path_table)
 
 else:
-    print(f"Fazendo MERGE na tabela {target_table}...")
-    safe_merge(df_final, path_silver, target_key)
+    print(f"Fazendo MERGE na tabela física Delta {path_table}...")
+
+    delta_table = DeltaTable.forPath(spark, path_table)
+
+    delta_table.alias("t").merge(
+        df_final.alias("s"),
+        f"t.{target_key} = s.{target_key}"
+    ).whenMatchedUpdateAll() \
+     .whenNotMatchedInsertAll() \
+     .execute()
 
 # METADATA ********************
 
