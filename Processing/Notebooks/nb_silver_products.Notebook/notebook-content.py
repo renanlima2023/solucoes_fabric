@@ -46,6 +46,7 @@ spark.conf.set("spark.sql.caseSensitive", True)
 
 #Bibliotecas
 from pyspark.sql import functions as F
+from delta.tables import DeltaTable
 import sempy.fabric as fabric
 
 
