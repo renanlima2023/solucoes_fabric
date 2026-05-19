@@ -268,15 +268,27 @@ display(df_final)
 
 # CELL ********************
 
-nome_limpo = target_table.split(".")[-1]
-tabela_nome = f"default.{nome_limpo}"
+# ==============================================================================
+# GRAVAÇÃO E TRATAMENTO DA TABELA (VERSÃO ULTRA-BLINDADA CONTRA CACHE)
+# ==============================================================================
+
+# Se o pipeline mandar "ws_feature_renan.lh_silver.Sales", isolamos apenas "Sales"
+nome_tabela_real = target_table.split(".")[-1]
+
+# Forçamos o Spark a usar o catálogo do Lakehouse atual na raiz de Tables
+tabela_nome = f"default.{nome_tabela_real}"
+
+print(f"Nome processado pelo script: {tabela_nome}")
 
 # Verifica se a tabela já existe registrada no catálogo do Lakehouse
 tabela_existe = spark.catalog.tableExists(tabela_nome)
 
 if not tabela_existe:
     print(f"Criando tabela identificada no Lakehouse: {tabela_nome}...")
-    df_final.write.format("delta").mode("overwrite").saveAsTable(tabela_nome)
+    df_final.write \
+        .format("delta") \
+        .mode("overwrite") \
+        .saveAsTable(tabela_nome)  # Registra oficialmente na raiz de 'Tables'
 
 else:
     print(f"Fazendo MERGE na tabela identificada {tabela_nome}...")
@@ -285,8 +297,11 @@ else:
     delta_table = DeltaTable.forName(spark, tabela_nome)
 
     delta_table.alias("t").merge(
-        df_final.alias("s"), f"t.{target_key} = s.{target_key}"
-    ).whenMatchedUpdateAll().whenNotMatchedInsertAll().execute()
+        df_final.alias("s"),
+        f"t.{target_key} = s.{target_key}"
+    ).whenMatchedUpdateAll() \
+     .whenNotMatchedInsertAll() \
+     .execute()
 
 # METADATA ********************
 
