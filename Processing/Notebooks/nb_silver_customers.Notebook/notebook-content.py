@@ -217,7 +217,13 @@ df_final = (
 
 # CELL ********************
 
-tabela_nome = f"default.{target_table}"
+# Força o Spark a limpar caminhos duplicados e pegar apenas o nome real da tabela (ex: "Sales")
+# Se target_table for "dbo.Sales" ou "default.Sales", o split garante que pegamos o objeto correto.
+nome_limpo = target_table.split(".")[-1]
+
+# Definimos explicitamente o caminho na raiz (default) usando apenas o nome limpo da tabela
+tabela_nome = f"default.{nome_limpo}"
+
 # Verifica se a tabela já existe registrada no catálogo do Lakehouse
 tabela_existe = spark.catalog.tableExists(tabela_nome)
 
@@ -226,12 +232,12 @@ if not tabela_existe:
     df_final.write \
         .format("delta") \
         .mode("overwrite") \
-        .saveAsTable(tabela_nome)  # Registra oficialmente na seção 'Tables'
+        .saveAsTable(tabela_nome)  # Registra oficialmente na raiz da seção 'Tables'
 
 else:
     print(f"Fazendo MERGE na tabela identificada {tabela_nome}...")
 
-    # Instancia a tabela Delta usando o nome mapeado no catálogo (forName em vez de forPath)
+    # Instancia a tabela Delta usando o nome mapeado no catálogo
     delta_table = DeltaTable.forName(spark, tabela_nome)
 
     delta_table.alias("t").merge(
