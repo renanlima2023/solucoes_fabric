@@ -34,9 +34,17 @@ spark.conf.set("spark.sql.caseSensitive", True)
 # CELL ********************
 
 import sempy.fabric as fabric
-workspace_id = fabric.get_notebook_workspace_id()
-workspace_name = fabric.resolve_workspace_name()
-print(fabric.resolve_workspace_name())
+
+# 1. Tenta capturar o nome dinamicamente
+workspace_dinamico = fabric.resolve_workspace_name()
+
+# 2. FORÇA o nome correto se o Fabric insistir no workspace de dev
+if workspace_dinamico == "ws_solucoes_dev":
+    workspace_name = "ws_feature_renan"
+else:
+    workspace_name = workspace_dinamico
+
+print(f"Workspace ativo para as cargas: {workspace_name}")
 
 # METADATA ********************
 
