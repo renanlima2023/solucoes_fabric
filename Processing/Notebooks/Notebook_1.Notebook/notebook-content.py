@@ -34,7 +34,7 @@ spark.conf.set("spark.sql.caseSensitive", True)
 # CELL ********************
 
 import sempy.fabric as fabric
-workspace_id = fabric.get_workspace_id()
+workspace_id = fabric.get_notebook_workspace_id()
 workspace_name = fabric.resolve_workspace_name()
 print(fabric.resolve_workspace_name())
 

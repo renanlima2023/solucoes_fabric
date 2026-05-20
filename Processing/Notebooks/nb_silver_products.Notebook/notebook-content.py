@@ -62,6 +62,7 @@ import sempy.fabric as fabric
 #Obtenção do workspaceID e workspaceName
 workspace_id = fabric.get_notebook_workspace_id()
 workspace_name = fabric.resolve_workspace_name()
+print(fabric.resolve_workspace_name())
 
 # METADATA ********************
 
