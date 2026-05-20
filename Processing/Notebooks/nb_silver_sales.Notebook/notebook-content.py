@@ -46,10 +46,9 @@ spark.conf.set("spark.sql.caseSensitive", True)
 
 #Bibliotecas
 from pyspark.sql import functions as F
-from pyspark.sql.window import Window
-from delta.tables import DeltaTable
+from pyspark.sql.window import Window  # Alterado para importar diretamente Window (sem alias W)
+from delta.tables import DeltaTable    # Import necessário para o Merge
 import sempy.fabric as fabric
-
 
 # METADATA ********************
 
@@ -63,6 +62,7 @@ import sempy.fabric as fabric
 #Obtenção do workspaceID e workspaceName
 workspace_id = fabric.get_notebook_workspace_id()
 workspace_name = fabric.resolve_workspace_name()
+print(fabric.resolve_workspace_name())
 
 # METADATA ********************
 
@@ -269,12 +269,17 @@ display(df_final)
 
 # CELL ********************
 
-# Força o Spark a limpar caminhos duplicados e pegar apenas o nome real da tabela (ex: "Sales")
-# Se target_table for "dbo.Sales" ou "default.Sales", o split garante que pegamos o objeto correto.
-nome_limpo = target_table.split(".")[-1]
+# ==============================================================================
+# GRAVAÇÃO E TRATAMENTO DA TABELA (VERSÃO ULTRA-BLINDADA CONTRA CACHE)
+# ==============================================================================
 
-# Definimos explicitamente o caminho na raiz (default) usando apenas o nome limpo da tabela
-tabela_nome = f"default.{nome_limpo}"
+# Se o pipeline mandar "ws_feature_renan.lh_silver.Sales", isolamos apenas "Sales"
+nome_tabela_real = target_table.split(".")[-1]
+
+# Forçamos o Spark a usar o catálogo do Lakehouse atual na raiz de Tables
+tabela_nome = f"default.{nome_tabela_real}"
+
+print(f"Nome processado pelo script: {tabela_nome}")
 
 # Verifica se a tabela já existe registrada no catálogo do Lakehouse
 tabela_existe = spark.catalog.tableExists(tabela_nome)
@@ -284,7 +289,7 @@ if not tabela_existe:
     df_final.write \
         .format("delta") \
         .mode("overwrite") \
-        .saveAsTable(tabela_nome)  # Registra oficialmente na raiz da seção 'Tables'
+        .saveAsTable(tabela_nome)  # Registra oficialmente na raiz de 'Tables'
 
 else:
     print(f"Fazendo MERGE na tabela identificada {tabela_nome}...")
