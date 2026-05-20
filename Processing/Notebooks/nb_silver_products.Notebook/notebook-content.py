@@ -234,26 +234,11 @@ df_final = (
 
 # CELL ********************
 
-# Isola o nome final da tabela e força a criação no catálogo raiz (default)
-nome_limpo = target_table.split(".")[-1]
-tabela_nome = f"default.{nome_limpo}"
-
-# Verifica se a tabela já existe registrada no catálogo do Lakehouse
-tabela_existe = spark.catalog.tableExists(tabela_nome)
-
-if not tabela_existe:
-    print(f"Criando tabela identificada no Lakehouse: {tabela_nome}...")
-    df_final.write.format("delta").mode("overwrite").saveAsTable(tabela_nome)
-
+# Gravação da Tabela com o modo atribuido
+if target_mode == "merge":
+    safe_merge(df_final, path_silver, target_key)
 else:
-    print(f"Fazendo MERGE na tabela identificada {tabela_nome}...")
-
-    # Instancia a tabela Delta usando o nome mapeado no catálogo
-    delta_table = DeltaTable.forName(spark, tabela_nome)
-
-    delta_table.alias("t").merge(
-        df_final.alias("s"), f"t.{target_key} = s.{target_key}"
-    ).whenMatchedUpdateAll().whenNotMatchedInsertAll().execute()
+    df_final.write.format("delta").mode(target_mode).save(path)
 
 # METADATA ********************
 
