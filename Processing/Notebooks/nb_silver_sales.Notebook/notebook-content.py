@@ -44,11 +44,10 @@ spark.conf.set("spark.sql.caseSensitive", True)
 
 # CELL ********************
 
-#Bibliotecas
 from pyspark.sql import functions as F
-from pyspark.sql.window import Window  # Alterado para importar diretamente Window (sem alias W)
-from delta.tables import DeltaTable    # Import necessário para o Merge
+from pyspark.sql.window import Window as W
 import sempy.fabric as fabric
+
 
 # METADATA ********************
 
